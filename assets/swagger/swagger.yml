@@ -1,0 +1,162 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Task Manager
+  description: Task Manager
+  contact:
+    name: Kevin Chen
+    email: kevinyay945@gmail.com
+    url: https://kevinyay945.com
+servers:
+  - url: http://localhost:5000
+tags:
+  - name: Task
+    description: Task API
+paths:
+  /tasks:
+    get:
+      summary: list tasks
+      tags:
+        - Task
+      description: get all tasks
+      operationId: getTasks
+      responses:
+        '200':
+          description: tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: create task
+      tags:
+        - Task
+      description: create task
+      operationId: postTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tasks/{id}:
+    put:
+      summary: update task
+      tags:
+        - Task
+      description: update task
+      operationId: putTask
+      parameters:
+        - name: id
+          in: path
+          description: ID of task
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: delete task
+      tags:
+        - Task
+      description: delete task
+      operationId: deleteTask
+      parameters:
+        - name: id
+          in: path
+          description: ID of task
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Task:
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        name:
+          type: string
+          description: task name
+        status:
+          type: integer
+          enum:
+            - 0
+            - 1
+          x-enum-varnames:
+            - TASK_UNCOMPLETED
+            - TASK_COMPLETED
+
+    Error:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message
