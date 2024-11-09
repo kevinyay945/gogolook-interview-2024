@@ -18,5 +18,6 @@ ENV TZ="Asia/Taipei"
 RUN apk add --no-cache tzdata
 
 COPY --from=builder /go/build/app ./
+COPY migrations ./migrations
 
 CMD ["./app"]
