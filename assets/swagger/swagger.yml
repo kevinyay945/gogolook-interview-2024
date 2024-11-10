@@ -8,7 +8,7 @@ info:
     email: kevinyay945@gmail.com
     url: https://kevinyay945.com
 servers:
-  - url: http://127.0.0.1:5000
+  - url: http://localhost:5000
 tags:
   - name: Task
     description: Task API
@@ -46,9 +46,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Task'
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: task name
+                status:
+                  $ref: '#/components/schemas/TaskStatus'
       responses:
-        '200':
+        '201':
           description: task
           content:
             application/json:
@@ -109,12 +118,8 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
-          description: task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
+        '204':
+          description: no content
         default:
           description: unexpected error
           content:
@@ -124,6 +129,14 @@ paths:
 
 components:
   schemas:
+    TaskStatus:
+      type: integer
+      enum:
+        - 0
+        - 1
+      x-enum-varnames:
+        - TASK_UNCOMPLETED
+        - TASK_COMPLETED
     Task:
       required:
         - id
@@ -145,13 +158,7 @@ components:
           type: string
           description: task name
         status:
-          type: integer
-          enum:
-            - 0
-            - 1
-          x-enum-varnames:
-            - TASK_UNCOMPLETED
-            - TASK_COMPLETED
+          $ref: '#/components/schemas/TaskStatus'
 
     Error:
       required:

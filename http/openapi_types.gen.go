@@ -32,11 +32,18 @@ type Task struct {
 	UpdatedAt time.Time  `json:"updatedAt"`
 }
 
-// TaskStatus defines model for Task.Status.
+// TaskStatus defines model for TaskStatus.
 type TaskStatus int
 
+// PostTaskJSONBody defines parameters for PostTask.
+type PostTaskJSONBody struct {
+	// Name task name
+	Name   string     `json:"name"`
+	Status TaskStatus `json:"status"`
+}
+
 // PostTaskJSONRequestBody defines body for PostTask for application/json ContentType.
-type PostTaskJSONRequestBody = Task
+type PostTaskJSONRequestBody PostTaskJSONBody
 
 // PutTaskJSONRequestBody defines body for PutTask for application/json ContentType.
 type PutTaskJSONRequestBody = Task
