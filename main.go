@@ -15,6 +15,7 @@ import (
 	"gogolook/assets"
 	"gogolook/di"
 	myHttp "gogolook/http"
+	"gogolook/lib/pg"
 	"net/http"
 	"os"
 	"time"
@@ -28,14 +29,7 @@ func main() {
 
 }
 func migrateDB() {
-	dbUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s%s",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_PORT"),
-		os.Getenv("POSTGRES_DB"),
-		os.Getenv("POSTGRES_QUERY_PARAMS"),
-	)
+	dbUrl := pg.GetPGURL()
 	for {
 		if err := isPGReady(dbUrl); err != nil {
 			log.Warningln("PG is not ready, retry after 5 seconds")
