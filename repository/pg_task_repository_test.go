@@ -18,7 +18,7 @@ type TaskSuite struct {
 
 // TestSuiteInitTask is only for development and useCase, remove it in production
 func TestSuiteInitTask(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 	suite.Run(t, new(TaskSuite))
 }
 func (t *TaskSuite) SetupTest() {

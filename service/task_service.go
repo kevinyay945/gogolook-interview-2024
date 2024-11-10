@@ -7,13 +7,20 @@ import (
 	"gogolook/repository"
 )
 
-// TaskService provides task-related operations.
+//go:generate mockgen -destination=task_service_mock.go -package=service -self_package=gogolook/service . TaskServiceInterface
+type TaskServiceInterface interface {
+	FindAllTasks(ctx context.Context) ([]domain.Task, error)
+	CreateTask(ctx context.Context, id uuid.UUID, name string, status domain.TaskStatus) (domain.Task, error)
+	UpdateTaskByID(ctx context.Context, id string, task domain.Task) (domain.Task, error)
+	DeleteTaskByID(ctx context.Context, id string) error
+}
+
 type TaskService struct {
 	repo repository.TaskRepository
 }
 
-func NewTaskService(repo repository.TaskRepository) TaskService {
-	return TaskService{repo: repo}
+func NewTaskService(repo repository.TaskRepository) TaskServiceInterface {
+	return &TaskService{repo: repo}
 }
 
 func (s *TaskService) FindAllTasks(ctx context.Context) ([]domain.Task, error) {

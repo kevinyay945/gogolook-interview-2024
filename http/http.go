@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	openapitypes "github.com/oapi-codegen/runtime/types"
@@ -10,10 +11,10 @@ import (
 )
 
 type RestfulServer struct {
-	taskService service.TaskService
+	taskService service.TaskServiceInterface
 }
 
-func NewRestfulServer(taskService service.TaskService) ServerInterface {
+func NewRestfulServer(taskService service.TaskServiceInterface) ServerInterface {
 	return &RestfulServer{taskService: taskService}
 }
 
@@ -38,8 +39,8 @@ func (r *RestfulServer) GetTasks(ctx echo.Context) error {
 
 func (r *RestfulServer) PostTask(ctx echo.Context) error {
 	input := struct {
-		Name   string `json:"name"`
-		Status int    `json:"status"`
+		Name   *string `json:"name" validate:"required"`
+		Status *int    `json:"status" validate:"required,oneof=0 1"`
 	}{}
 	id, err := uuid.NewRandom()
 	if err != nil {
@@ -51,8 +52,13 @@ func (r *RestfulServer) PostTask(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
+	err = validator.New().Struct(input)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	createTask, err := r.taskService.CreateTask(ctx.Request().Context(),
-		id, input.Name, domain.TaskStatus(input.Status),
+		id, *input.Name, domain.TaskStatus(*input.Status),
 	)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
