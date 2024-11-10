@@ -54,6 +54,7 @@ func (r *RestfulServer) PostTask(ctx echo.Context) error {
 
 	err = validator.New().Struct(input)
 	if err != nil {
+		//return ctx.JSON(http.StatusBadRequest, err.Error())
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
@@ -85,6 +86,13 @@ func (r *RestfulServer) DeleteTask(ctx echo.Context, id openapitypes.UUID) error
 func (r *RestfulServer) PutTask(ctx echo.Context, id openapitypes.UUID) error {
 	task := Task{}
 	err := ctx.Bind(&task)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	err = validator.New().Struct(struct {
+		Status *TaskStatus `validate:"oneof=0 1"`
+	}{&task.Status})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
