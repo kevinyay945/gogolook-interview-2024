@@ -119,7 +119,11 @@ func (t *HttpSuite) Test_update_task() {
 		c := t.e.NewContext(req, rec)
 
 		parseUUID := uuid.MustParse(currTestCase.uuid)
-		t.NoError(t.handler.PutTask(c, parseUUID))
+		if currTestCase.isError {
+			t.Error(t.handler.PutTask(c, parseUUID))
+		} else {
+			t.NoError(t.handler.PutTask(c, parseUUID))
+		}
 		t.Equal(http.StatusOK, rec.Code)
 	}
 }
